@@ -7,20 +7,20 @@ using TMPro;
 
 public class PlayerController : MonoBehaviour
 {
- private Rigidbody rb; 
+    private Rigidbody rb;
 
- private int count;
+    private int count;
 
- private float movementX;
- private float movementY;
+    private float movementX;
+    private float movementY;
 
- public float speed = 0;
+    public float speed = 0;
 
- public TextMeshProUGUI countText;
+    public TextMeshProUGUI countText;
 
- public GameObject winTextObject;
+    public GameObject winTextObject;
 
- void Start()
+    void Start()
     {
         rb = GetComponent<Rigidbody>();
 
@@ -30,26 +30,26 @@ public class PlayerController : MonoBehaviour
 
         winTextObject.SetActive(false);
     }
- 
- void OnMove(InputValue movementValue)
+
+    void OnMove(InputValue movementValue)
     {
         Vector2 movementVector = movementValue.Get<Vector2>();
 
-        movementX = movementVector.x; 
-        movementY = movementVector.y; 
+        movementX = movementVector.x;
+        movementY = movementVector.y;
     }
 
- private void FixedUpdate() 
+    private void FixedUpdate()
     {
-        Vector3 movement = new Vector3 (movementX, 0.0f, movementY);
+        Vector3 movement = new Vector3(movementX, 0.0f, movementY);
 
-        rb.AddForce(movement * speed); 
+        rb.AddForce(movement * speed);
     }
 
- 
- void OnTriggerEnter(Collider other) 
+
+    void OnTriggerEnter(Collider other)
     {
- if (other.gameObject.CompareTag("PickUp")) 
+        if (other.gameObject.CompareTag("PickUp"))
         {
             other.gameObject.SetActive(false);
 
@@ -59,13 +59,22 @@ public class PlayerController : MonoBehaviour
         }
     }
 
- void SetCountText() 
+    void SetCountText()
     {
         countText.text = "Count: " + count.ToString();
-
- if (count >= 10)
+        if (count >= 10)
         {
             winTextObject.SetActive(true);
+            Destroy(GameObject.FindGameObjectWithTag("Enemy"));
+        }
+    }
+    private void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Enemy"))
+        {
+            Destroy(gameObject);
+            winTextObject.gameObject.SetActive(true);
+            winTextObject.GetComponent<TextMeshProUGUI>().text = "You Lose!";
         }
     }
 }
